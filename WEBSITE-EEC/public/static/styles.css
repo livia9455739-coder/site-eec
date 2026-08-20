@@ -1,0 +1,836 @@
+/**
+ * =====================================================================
+ * ESCOLA ESTADUAL DO CARIRI (EEC) - ESTILOS CUSTOMIZADOS
+ * =====================================================================
+ * 
+ * Arquivo: public/static/styles.css
+ * Descrição: Estilos CSS customizados para o website institucional
+ * 
+ * Este arquivo contém:
+ *   1. Variáveis CSS (cores da escola)
+ *   2. Estilos base (scroll, scrollbar, seleção de texto)
+ *   3. Preloader (tela de carregamento)
+ *   4. Navbar (navegação com efeito scroll)
+ *   5. Hero Section (partículas, cards flutuantes, animações)
+ *   6. Cards de cursos, professores, eventos
+ *   7. Animações personalizadas (float, fade, slide)
+ *   8. Estilos responsivos
+ *   9. Botões flutuantes (WhatsApp, voltar ao topo)
+ * 
+ * Dependências:
+ *   - Tailwind CSS (utilitários via CDN)
+ *   - Font Awesome (ícones)
+ *   - Google Fonts (Poppins, Playfair Display)
+ *   - AOS (Animate On Scroll)
+ * 
+ * @version 2.0.0
+ * @author Equipe de Desenvolvimento EEC
+ * @date 2026-02-08
+ * =====================================================================
+ */
+
+/* =====================================================================
+   VARIÁVEIS CSS (CSS CUSTOM PROPERTIES)
+   =====================================================================
+   
+   Definição das cores oficiais da escola
+   Podem ser usadas em qualquer lugar com var(--nome-variavel)
+   
+   Paleta de cores:
+   - Navy: Azul escuro principal (backgrounds, textos)
+   - Gold: Dourado/Laranja para destaques e CTAs
+   - Sky: Azul claro para elementos secundários
+   - Emerald: Verde para sucesso e badges
+   - Coral: Coral/Vermelho para alertas
+   ===================================================================== */
+:root {
+    --school-navy: #0F1B4C;    /* Azul escuro - cor principal */
+    --school-gold: #F59E0B;    /* Dourado - destaques e CTAs */
+    --school-sky: #38BDF8;     /* Azul claro - elementos secundários */
+    --school-emerald: #10B981; /* Verde - sucesso, badges positivos */
+    --school-coral: #F43F5E;   /* Coral - alertas, erros */
+}
+
+/* =====================================================================
+   ESTILOS BASE (HTML & BODY)
+   =====================================================================
+   
+   Configurações globais para:
+   - Scroll suave entre seções
+   - Offset do scroll para compensar navbar fixa
+   - Suavização de fontes (anti-aliasing)
+   ===================================================================== */
+
+/**
+ * HTML - Configurações de scroll
+ * scroll-behavior: smooth - Animação suave ao clicar em âncoras
+ * scroll-padding-top: 80px - Offset para não esconder conteúdo sob navbar
+ */
+html {
+    scroll-behavior: smooth;      /* Navegação suave entre seções */
+    scroll-padding-top: 80px;     /* Compensa altura da navbar fixa */
+}
+
+/**
+ * BODY - Suavização de fontes
+ * Melhora a renderização de texto em diferentes navegadores
+ * -webkit-font-smoothing: Para Chrome/Safari
+ * -moz-osx-font-smoothing: Para Firefox no macOS
+ */
+body {
+    -webkit-font-smoothing: antialiased;     /* Chrome/Safari */
+    -moz-osx-font-smoothing: grayscale;      /* Firefox macOS */
+}
+
+/**
+ * SELEÇÃO DE TEXTO
+ * Personaliza a aparência quando o usuário seleciona texto
+ * Background dourado com texto branco
+ */
+::selection {
+    background: var(--school-gold);  /* Fundo dourado na seleção */
+    color: white;                    /* Texto branco na seleção */
+}
+
+/* =====================================================================
+   SCROLLBAR CUSTOMIZADA
+   =====================================================================
+   
+   Personaliza a barra de rolagem do navegador
+   Funciona em navegadores WebKit (Chrome, Edge, Safari)
+   ===================================================================== */
+
+/**
+ * Largura da barra de scroll
+ * Mais fina que o padrão para visual mais limpo
+ */
+::-webkit-scrollbar {
+    width: 8px;  /* Largura em pixels */
+}
+
+/**
+ * Trilho da scrollbar (background)
+ * Cor clara para contraste com o thumb
+ */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;  /* Cinza claro */
+}
+
+/**
+ * Thumb da scrollbar (parte que arrasta)
+ * Cor primária da escola (navy blue)
+ */
+::-webkit-scrollbar-thumb {
+    background: var(--school-navy);  /* Azul escuro */
+    border-radius: 4px;              /* Bordas arredondadas */
+}
+
+/**
+ * Thumb da scrollbar: estado hover
+ * Muda para dourado quando o mouse passa por cima
+ */
+::-webkit-scrollbar-thumb:hover {
+    background: var(--school-gold);  /* Dourado no hover */
+}
+
+/* =====================================================================
+   PRELOADER (TELA DE CARREGAMENTO)
+   =====================================================================
+   
+   Tela exibida enquanto a página carrega
+   É ocultada após 1.5 segundos via JavaScript
+   ===================================================================== */
+
+/**
+ * Container do preloader
+ * Transições suaves para opacity e visibility
+ * Permite fade-out gracioso
+ */
+#preloader {
+    transition: opacity 0.7s ease, visibility 0.7s ease;
+}
+
+/**
+ * Preloader: estado oculto
+ * Classe adicionada via JavaScript após carregamento
+ * opacity: 0 - invisível
+ * visibility: hidden - não ocupa espaço
+ * pointer-events: none - não captura cliques
+ */
+#preloader.hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* ============================================
+   NAVBAR
+   ============================================ */
+#navbar {
+    background: transparent;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#navbar.scrolled {
+    background: rgba(15, 27, 76, 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2);
+}
+
+.nav-link {
+    position: relative;
+}
+
+.nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--school-gold);
+    transition: all 0.3s ease;
+    transform: translateX(-50%);
+    border-radius: 2px;
+}
+
+.nav-link:hover::after,
+.nav-link.active::after {
+    width: 60%;
+}
+
+/* ============================================
+   HERO PARTICLES
+   ============================================ */
+.particle {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.15;
+    animation: float-particle linear infinite;
+}
+
+.particle-1 {
+    width: 6px;
+    height: 6px;
+    background: var(--school-gold);
+    top: 20%;
+    left: 10%;
+    animation-duration: 15s;
+}
+
+.particle-2 {
+    width: 8px;
+    height: 8px;
+    background: var(--school-sky);
+    top: 60%;
+    left: 80%;
+    animation-duration: 20s;
+    animation-delay: -5s;
+}
+
+.particle-3 {
+    width: 4px;
+    height: 4px;
+    background: var(--school-emerald);
+    top: 40%;
+    left: 30%;
+    animation-duration: 18s;
+    animation-delay: -8s;
+}
+
+.particle-4 {
+    width: 10px;
+    height: 10px;
+    background: var(--school-coral);
+    top: 80%;
+    left: 60%;
+    animation-duration: 22s;
+    animation-delay: -3s;
+}
+
+.particle-5 {
+    width: 5px;
+    height: 5px;
+    background: var(--school-gold);
+    top: 10%;
+    left: 70%;
+    animation-duration: 16s;
+    animation-delay: -10s;
+}
+
+.particle-6 {
+    width: 7px;
+    height: 7px;
+    background: var(--school-sky);
+    top: 70%;
+    left: 20%;
+    animation-duration: 19s;
+    animation-delay: -7s;
+}
+
+@keyframes float-particle {
+
+    0%,
+    100% {
+        transform: translate(0, 0) rotate(0deg);
+    }
+
+    25% {
+        transform: translate(100px, -50px) rotate(90deg);
+    }
+
+    50% {
+        transform: translate(50px, -100px) rotate(180deg);
+    }
+
+    75% {
+        transform: translate(-50px, -50px) rotate(270deg);
+    }
+}
+
+/* ============================================
+   HERO ELEMENTS
+   ============================================ */
+.hero-card {
+    animation: hero-float 6s ease-in-out infinite;
+}
+
+@keyframes hero-float {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+.floating-element {
+    animation: float-1 4s ease-in-out infinite;
+}
+
+.floating-element-2 {
+    animation: float-2 5s ease-in-out infinite;
+}
+
+@keyframes float-1 {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-10px) rotate(2deg);
+    }
+}
+
+@keyframes float-2 {
+
+    0%,
+    100% {
+        transform: translateY(0) rotate(0deg);
+    }
+
+    50% {
+        transform: translateY(-15px) rotate(-2deg);
+    }
+}
+
+.animate-bounce-slow {
+    animation: bounce-slow 3s ease-in-out infinite;
+}
+
+@keyframes bounce-slow {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-8px);
+    }
+}
+
+/* ============================================
+   ANIMATE-FLOAT - Classe para cards flutuantes
+   Usada nos cards do Hero Section
+   ============================================ */
+.animate-float {
+    animation: float-cards 4s ease-in-out infinite;
+}
+
+@keyframes float-cards {
+
+    0%,
+    100% {
+        transform: translateY(0px);
+    }
+
+    50% {
+        transform: translateY(-12px);
+    }
+}
+
+/* ============================================
+   SCROLL INDICATOR
+   ============================================ */
+.mouse {
+    width: 26px;
+    height: 40px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 13px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.wheel {
+    width: 4px;
+    height: 8px;
+    background: var(--school-gold);
+    border-radius: 2px;
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    animation: scroll-wheel 2s ease-in-out infinite;
+}
+
+@keyframes scroll-wheel {
+    0% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(12px);
+    }
+}
+
+/* ============================================
+   CURSO CARDS
+   ============================================ */
+.curso-card {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    border: 1px solid #f3f4f6;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.curso-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: var(--card-color, var(--school-gold));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+}
+
+.curso-card:hover::before {
+    transform: scaleX(1);
+}
+
+.curso-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+    border-color: transparent;
+}
+
+.curso-card .icon-wrapper {
+    width: 70px;
+    height: 70px;
+    border-radius: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    transition: all 0.4s ease;
+    position: relative;
+}
+
+.curso-card:hover .icon-wrapper {
+    transform: scale(1.1) rotate(5deg);
+}
+
+.curso-card .icon-wrapper::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 1.5rem;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.curso-card:hover .icon-wrapper::after {
+    opacity: 0.15;
+}
+
+/* ============================================
+   PROFESSOR CARDS
+   ============================================ */
+.professor-card {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    text-align: center;
+    border: 1px solid #f3f4f6;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.professor-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+}
+
+.professor-card .avatar {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    position: relative;
+    transition: all 0.4s ease;
+}
+
+.professor-card:hover .avatar {
+    transform: scale(1.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.professor-card .avatar::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    border: 2px dashed rgba(0, 0, 0, 0.1);
+    animation: none;
+    transition: all 0.4s ease;
+}
+
+.professor-card:hover .avatar::before {
+    animation: spin-slow 8s linear infinite;
+    border-color: var(--avatar-color, var(--school-gold));
+}
+
+@keyframes spin-slow {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.professor-card .social-links {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+}
+
+.professor-card:hover .social-links {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ============================================
+   EVENT CARDS
+   ============================================ */
+.evento-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.evento-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.evento-card:hover::before {
+    opacity: 1;
+}
+
+.evento-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.evento-tipo-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+/* ============================================
+   DEPOIMENTO CARDS
+   ============================================ */
+.depoimento-card {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    border: 1px solid #f3f4f6;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.depoimento-card::before {
+    content: '\201C';
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 5rem;
+    font-family: 'Playfair Display', serif;
+    color: rgba(245, 158, 11, 0.1);
+    line-height: 1;
+}
+
+.depoimento-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+}
+
+/* ============================================
+   FORM STYLES
+   ============================================ */
+#contact-form input:focus,
+#contact-form select:focus,
+#contact-form textarea:focus {
+    background: white;
+}
+
+#contact-form .success-message {
+    color: var(--school-emerald);
+    background: rgba(16, 185, 129, 0.1);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-weight: 500;
+}
+
+#contact-form .error-message {
+    color: var(--school-coral);
+    background: rgba(244, 63, 94, 0.1);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    font-weight: 500;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -200% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+}
+
+/* Glow effect for gold elements */
+.glow-gold {
+    box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+}
+
+/* Gradient text animation */
+.gradient-text-animate {
+    background-size: 200% auto;
+    animation: gradient-shift 3s ease-in-out infinite;
+}
+
+@keyframes gradient-shift {
+
+    0%,
+    100% {
+        background-position: 0% center;
+    }
+
+    50% {
+        background-position: 100% center;
+    }
+}
+
+/* ============================================
+   RESPONSIVE FIXES
+   ============================================ */
+@media (max-width: 768px) {
+    .hero-card {
+        animation: none;
+    }
+
+    .floating-element,
+    .floating-element-2 {
+        display: none;
+    }
+
+    .particle {
+        display: none;
+    }
+
+    section {
+        padding-top: 4rem;
+        padding-bottom: 4rem;
+    }
+}
+
+@media (max-width: 640px) {
+    h1 {
+        font-size: 2.25rem !important;
+    }
+
+    h2 {
+        font-size: 1.875rem !important;
+    }
+
+    .counter-stat,
+    .counter {
+        font-size: 2rem !important;
+    }
+}
+
+/* ============================================
+   LOADING SKELETON
+   ============================================ */
+.skeleton {
+    background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 0.75rem;
+}
+
+/* ============================================
+   SMOOTH REVEALS
+   ============================================ */
+[data-aos] {
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* ============================================
+   WHATSAPP & BACK TO TOP BUTTONS
+   ============================================ */
+#whatsapp-btn.visible,
+#back-to-top.visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#whatsapp-btn::before {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border-radius: 50%;
+    background: rgba(34, 197, 94, 0.3);
+    animation: whatsapp-pulse 2s ease-in-out infinite;
+}
+
+@keyframes whatsapp-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0;
+    }
+}

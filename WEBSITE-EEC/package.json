@@ -1,0 +1,34 @@
+{
+    "name": "website-eec",
+    "type": "module",
+    "engine": {
+        "node": "24.x"
+    },
+    "scripts":{
+        "build:css": "tailwind -i ./src/styles/tailwind.css ./public/styles/tailwind.css --minify",
+        "build:server": "esbuild src/node/server.ts --bundle --platform=node --target=node24 --format=esm --packages=external --outfile=dist/server.js",
+        "copy:public": "node scripts/copy-public.cjs",
+        "clean": "node -e \"require('fs').rmSync('dist',{recursive:true,force:true})\"",
+        "dev": "npm run clean && npm run build:css && npm run build:server && npm run copy:public",
+        "build": "npm run clean && npm run build:css && npm run build:server && npm run copy:public",
+        "start": "node dist/server.js"
+    },
+    "dependencies": {
+        "@hono/node-server": "^2.0.1",
+        "dotenv": "^17.4.2",
+        "hono": "^4.11.8",
+        "pg": "^8.20.0",
+        "zod": "^4.4.3"
+    },
+    "devDependencies": {
+        "@tailwindcss/cli": "^4.2.4",
+        "@tailwindcss/postcss": "^4.2.4",
+        "types/pg": "^8.20.0",
+        "autoprefixer": "^10.5.0",
+        "esbuild": "^0.28.0",
+        "postcss": "^8.5.14",
+        "tailwindcss": "^4.2.4",
+        "tsx": "^4.21.0",
+        "vite": "^6.3.5"
+    }
+}

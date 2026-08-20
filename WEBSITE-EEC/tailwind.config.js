@@ -1,0 +1,60 @@
+export default {
+    content: [
+        './src/**/*.{ts, tsx, js, jsx, html}',
+        './public/static/**/*.{js,css}',
+    ],
+    theme: {
+        extend: {
+            fontFamily: {
+                poppins: ['Poppins', 'sans-serif'],
+                playfair: ['Playfair Display', 'serif'],
+            },
+            colors: {
+                primary: {
+                    50: '#eff6ff',
+                    100: '#dbeafe',
+                    200: '#bfdbfe',
+                    300: '#93c5fd',
+                    400: '#60a5fa',
+                    500: '#3b82f6',
+                    600: '#2563eb',
+                    700: '#1d4ed8',
+                    800: '#1e40af',
+                    900: '#1e3a8a',
+                },
+                accent: {
+                    50: '#fdf4ff',
+                    100: '#fae8ff',
+                    200: '#f5d0fe',
+                    300: '#f0abfc',
+                    400: '#e879f9',
+                    500: '#d946ef',
+                    600: '#c026d3',
+                    700: '#a21caf',
+                    800: '#86198f',
+                    900: '#701a75',
+                },
+                warm: {
+                    50: '#fff7ed',
+                    100: '#ffedd5',
+                    200: '#fed7aa',
+                    300: '#fdba74',
+                    400: '#fb923c',
+                    500: '#f97316',
+                    600: '#ea580c',
+                    700: '#c2410c',
+                    800: '#9a3412',
+                    900: '#7c2d12',
+                },
+                school: {
+                    navy: '#0f1b4c',
+                    blue: '#1e40af',
+                    sky: '#38bdf8',
+                    gold: '#f59e0b',
+                    esmerald: '#10b981',
+                    coral: '#f43f5e',
+                },
+            },
+        },
+    },
+}
