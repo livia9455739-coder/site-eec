@@ -1,11 +1,11 @@
 import type { context } from 'hono'
-import { httpError}
+import { httpError } from '../errors/http-error'
 import { createHonoSupabaseClient } from '../lib/supabase'
 import { updateProfileName } from '../repositories/user.repository'
 import { authenticateWithPassword, requestPasswordReset, terminateSession } from '../services/auth.service'
 import { readJsonBody } from '../utils/request'
 
-export async function postLogin(c:Context) { // cria e exporta a função responsável pelo login
+export async function postLogin(c: Context) { // cria e exporta a função responsável pelo login
     try {
         const body = (await readJsonBody(c, 4 * 1024)) as { email?: string; password?: string }
         const email = body?.email?.trim() || ''
