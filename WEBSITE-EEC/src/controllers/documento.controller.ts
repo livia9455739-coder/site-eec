@@ -51,5 +51,81 @@ export async function uploadDocumentoHandler(c: Context) {
         fileBuffer,
         mimeType: file.type || 'application/octet-stream',
         categoria
-    })
+    }, user, client)
+
+    return c.json({ success: true, data: doc }, 201)
 }
+
+export async function getDownloadUrlHandler(c: Context) {
+    const user = c.get('user') as authUser
+    const client = createHonoSupabaseClient(c)
+    const id = parseInt(c.req.param('id'), 10)
+
+    if (isNaN(id)) {
+        throw new HttpError(400, 'Identificador de documento inválido.')
+    }
+
+    const result = await getDocumentoDownloadUrl(id, user, client)
+    return c.json9({ success: true, ...result})
+}
+
+export async function approveDocumentoHandler(c: Context) {
+    const user = c.get('user') as authUser
+    const client = createHonoSupabaseClient(c)
+    const id = parseInt(c.req.param('id'), 10)
+
+    if (isNaN(id)) {
+        throw new HttpError(400, 'Identificador de documento inválido.')
+    }
+
+    await approveUserDocumento(id, user, client)
+    return c.json({ success: true, message: 'Documento aprovado com sucesso.' })
+}
+
+export async function rejectDocumentoHandler(c: Context) {
+    const user = c.get('user') as authUser
+    const client = createHonoSupabaseClient(c)
+    const id = parseInt(c.req.param('id'), 10)
+
+    if (isNaN(id)) {
+        throw new HttpError(400, 'Identificador de documento inválido.')
+    }
+
+    const body = await c.req.json().catch(() => null)
+    const parseResult = rejeitarDocumentoSchema.safeParse(body)
+    if (!parseResult.success) {
+        throw new HttpError(400, 'Motivo da rejeição é obrigatório e deve ter ao menos 5 caracteres.')
+    }
+
+    await rejectUserDocumento(id, parseResult.data.motivo, user, client)
+    return c.json({ success: true, message: 'Documento rejeitado.' })
+}
+
+export async function archiveDocumentoHandler(c: Context) {
+    const user = c.get('user') as authUser
+    const client = createHonoSupabaseClient(c)
+    const id = parseInt(c.req.param('id'), 10)
+
+    if (isNaN(id)) {
+        throw new HttpError(400, 'Identificador de documento inválido.')
+    }
+
+    await arquiveUserDocumento(id, user, client)
+    return c.json({ success: true, message: 'Documento arquivado com sucesso.' })
+}
+
+export async function shareDocumentoHandler(c: Context) {
+    const user = c.get('user') as authUser
+    const client = createHonoSupabaseClient(c)
+    const id = parseInt(c.req.param('id'), 10)
+
+    if (isNaN(id)) {
+        throw new HttpError(400, 'Identificador de documento inválido.')
+    }
+
+    const body = await c.req.json().catch(() => null)
+    const parseResult = createCompartilhamentoSchema.safeParse(body)
+    if (!parseResult.success) {
+        const errorMsg = parseResult.error.issues.map((i: { message: string }) => i.message).join('.')
+        throw new HttpError(400, 'Dados de compatilhamento inválido: ${errorMsg}')
+    }
