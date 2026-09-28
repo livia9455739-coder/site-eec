@@ -110,7 +110,7 @@ export async function archiveDocumentoHandler(c: Context) {
         throw new HttpError(400, 'Identificador de documento inválido.')
     }
 
-    await arquiveUserDocumento(id, user, client)
+    await archiveUserDocumento(id, user, client)
     return c.json({ success: true, message: 'Documento arquivado com sucesso.' })
 }
 
@@ -176,3 +176,29 @@ export async function uploadFinalizarHandler(c: Context) {
         const errorMsg = parseResult.error.issues.map((i: { message: string }) => i.message).join('.')
         throw new HttpError(400, 'Dados de finalização de upload inválido: ${errorMsg}')
     }
+
+    const doc = await finalizeDirectUploadDocumento(parseResult.data, user, client)
+    return c.json({ success: true, data: doc }, 201)
+}
+
+export async function directUploadLocalHandler(c: Context) {
+    const path = c.req.query('path') || ''
+    const expires = c.req.query('expires') || ''
+    const sig = c.req.query('sig') || ''
+
+    if (!path || !expires || !sig) {
+        throw new HttpError(400, 'Parâmetros de assinatura incompletos.')
+    }
+
+    const expiresNum = parseInt(expires, 10)
+    if (isNaN(expiresNum) || Date.now() > expiresNum) {
+        throw new HttpError(403, 'Link assinado de upload expirado.')
+    }
+
+    const rawBody = await c.req.ArrayBuffer()
+    const contentType = c.req.header('content-type') || 'appication/octet-stream'
+
+    saveLocalDirectUpload(path, Buffer.from(rawBody), contentType)
+    return c.json({ success: true, message: 'Upload direto local concluído com sucesso.' })
+}
+
