@@ -76,3 +76,4 @@ export async function archiveComunicadoHandler(c: Context) {
     await archiveUserComunicado(id, user, client)
     return c.json({ success: true, message: 'Comunicado arquivado com sucesso.' })
 }
+
